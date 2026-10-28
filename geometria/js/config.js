@@ -9,9 +9,9 @@ window.APP_CONFIG = {
   /* --- Registro de informes en Google Sheets (ver README, sección "Google Sheets") --- */
   // ID de la planilla: es la parte de la URL entre /d/ y /edit
   // https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
-  GOOGLE_SHEET_ID: 'PEGAR_AQUI_EL_ID_DE_LA_PLANILLA',
+  GOOGLE_SHEET_ID: '1R3tD3-egtKugMQnStLbYADTOsaXFp0Js2aZjOhgwRbo',
   // URL de la aplicación web de Apps Script (termina en /exec)
-  APPS_SCRIPT_URL: 'PEGAR_AQUI_LA_URL_DEL_WEB_APP',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby1jlySY-26A0S8XYCR91scoxgRfTsHNjTJ5tYtOKHF-wv7l_1xBg1WcMTnaVbWjNt3pQ/exec',
   // Clave compartida: debe ser IGUAL a la que figura en Code.gs
   CLAVE_ENVIO: 'guardianes-7mo',
 
