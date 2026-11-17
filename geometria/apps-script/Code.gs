@@ -1,5 +1,6 @@
 /**
- * Guardianes de la Geometría — Registro de informes en Google Sheets
+ * Guardianes de la Geometría — Registro de respuestas de la evaluación en Google Sheets
+ * (versión evaluación: crea las hojas Informes, Por contenido, Por misión y Respuestas)
  * -------------------------------------------------------------------
  * 1. Abrí script.google.com → Nuevo proyecto y pegá este código.
  * 2. Revisá CLAVE (debe coincidir con CLAVE_ENVIO de js/config.js).
@@ -16,11 +17,11 @@ const CLAVE = 'guardianes-7mo';
 const SHEET_ID_FIJO = '';   // opcional: 'ID_DE_TU_PLANILLA'
 
 const HOJAS = {
-  informes: ['Recibido', 'Envío', 'Estudiante', 'Curso', 'Fecha (dispositivo)', 'Tiempo (min)', 'Misiones completadas', 'Misiones aprobadas',
-    'Niveles desbloqueados', 'XP', 'Estrellas', 'Insignias', 'Actividades', 'Correctas', 'Incorrectas', 'Correctas 1.er intento', 'Intentos',
-    '% correctas', 'Fortalezas', 'Aspectos para mejorar', 'Sin datos suficientes', 'Recomendaciones', 'Autoevaluaciones', 'Modo docente'],
-  contenido: ['Recibido', 'Envío', 'Estudiante', 'Contenido', 'Actividades', 'Correctas', '% logro', 'Nivel', 'Recomendación'],
-  mision: ['Recibido', 'Envío', 'Estudiante', 'Misión', 'Completa', 'Aprobada', '% logro', 'Estrellas', 'Correctas', 'Actividades', 'Pistas']
+  informes: ['Recibido', 'Envío', 'Estudiante', 'Curso', 'Fecha (dispositivo)', 'Tiempo (min)', 'Misiones completas', 'Respondidas', 'Total',
+    'Correctas', 'No correctas', '% correctas', '% logro', 'XP', 'Insignias', 'Modo docente'],
+  contenido: ['Recibido', 'Envío', 'Estudiante', 'Contenido', 'Respondidas', 'Correctas', '% logro', 'Nivel'],
+  mision: ['Recibido', 'Envío', 'Estudiante', 'Misión', 'Completa', 'Respondidas', 'Correctas', '% logro'],
+  respuestas: ['Recibido', 'Envío', 'Estudiante', 'N.º', 'Misión', 'Contenido', 'Consigna', 'Respuesta del estudiante', 'Respuesta correcta', 'Resultado', 'Puntaje (0 a 1)']
 };
 
 function doPost(e) {
@@ -32,27 +33,29 @@ function doPost(e) {
     if (!id) return salida({ ok: false, error: 'falta el ID de la planilla' });
     lock.waitLock(20000);
     const ss = SpreadsheetApp.openById(id);
-    const hInf = hoja(ss, 'Informes', HOJAS.informes), hCon = hoja(ss, 'Por contenido', HOJAS.contenido), hMis = hoja(ss, 'Por misión', HOJAS.mision);
-    // evitar duplicados si el mismo envío llega dos veces
+    const hInf = hoja(ss, 'Informes', HOJAS.informes), hCon = hoja(ss, 'Por contenido', HOJAS.contenido),
+      hMis = hoja(ss, 'Por misión', HOJAS.mision), hRes = hoja(ss, 'Respuestas', HOJAS.respuestas);
     const ult = hInf.getLastRow();
     if (ult > 1) {
       const ids = hInf.getRange(Math.max(2, ult - 200), 2, Math.min(200, ult - 1), 1).getValues().map(function (r) { return r[0]; });
       if (ids.indexOf(d.envioId) >= 0) return salida({ ok: true, duplicado: true });
     }
-    const ahora = new Date(), alias = String(d.alias || '').slice(0, 40);
-    hInf.appendRow([ahora, d.envioId, alias, d.curso, d.fecha, d.tiempoMin, d.misionesCompletadas, d.misionesAprobadas, d.nivelesDesbloqueados,
-      d.xp, d.estrellas, d.insignias, d.actividades, d.correctas, d.incorrectas, d.primerIntento, d.intentos, d.pctCorrectas,
-      d.fortalezas, d.mejoras, d.sinDatos, d.recomendaciones, d.autoevaluaciones, d.modoDocente ? 'Sí' : 'No']);
-    const rc = (d.porContenido || []).map(function (c) { return [ahora, d.envioId, alias, c.contenido, c.actividades, c.correctas, c.logro, c.nivel, c.recomendacion]; });
-    if (rc.length) hCon.getRange(hCon.getLastRow() + 1, 1, rc.length, rc[0].length).setValues(rc);
-    const rm = (d.porMision || []).map(function (m) { return [ahora, d.envioId, alias, m.mision, m.completa ? 'Sí' : 'No', m.aprobada ? 'Sí' : 'No', m.logro, m.estrellas, m.correctas, m.actividades, m.pistas]; });
-    if (rm.length) hMis.getRange(hMis.getLastRow() + 1, 1, rm.length, rm[0].length).setValues(rm);
+    const ahora = new Date(), alias = String(d.alias || '').slice(0, 60);
+    hInf.appendRow([ahora, d.envioId, alias, d.curso, d.fecha, d.tiempoMin, d.misionesCompletadas, d.respondidas, d.total,
+      d.correctas, d.incorrectas, d.pctCorrectas, d.logro, d.xp, d.insignias, d.modoDocente ? 'Sí' : 'No']);
+    agregar(hCon, (d.porContenido || []).map(function (c) { return [ahora, d.envioId, alias, c.contenido, c.respondidas, c.correctas, c.logro, c.nivel]; }));
+    agregar(hMis, (d.porMision || []).map(function (m) { return [ahora, d.envioId, alias, m.mision, m.completa ? 'Sí' : 'No', m.respondidas, m.correctas, m.logro]; }));
+    agregar(hRes, (d.respuestas || []).map(function (r) { return [ahora, d.envioId, alias, "'" + r.num, r.mision, r.contenido, r.consigna, r.respuesta, r.correcta, r.resultado, r.puntaje]; }));
     return salida({ ok: true });
   } catch (err) {
     return salida({ ok: false, error: String(err && err.message || err) });
   } finally {
     try { lock.releaseLock(); } catch (e2) { }
   }
+}
+
+function agregar(h, filas) {
+  if (filas.length) h.getRange(h.getLastRow() + 1, 1, filas.length, filas[0].length).setValues(filas);
 }
 
 /** Si agregaste el archivo HTML "app" (versión de un solo archivo), la aplicación se publica en esta misma URL. */
@@ -84,6 +87,6 @@ function salida(obj) {
 /** Ejecutá esta función una vez desde el editor para autorizar el acceso a la planilla y probarla. */
 function probar() {
   const id = SHEET_ID_FIJO || 'PEGAR_ID_PARA_PROBAR';
-  const r = doPost({ postData: { contents: JSON.stringify({ clave: CLAVE, sheetId: id, envioId: 'prueba-' + Date.now(), alias: 'Prueba', curso: '7.º grado', porContenido: [], porMision: [] }) } });
+  const r = doPost({ postData: { contents: JSON.stringify({ clave: CLAVE, sheetId: id, envioId: 'prueba-' + Date.now(), alias: 'Prueba', curso: '7.º grado', porContenido: [], porMision: [], respuestas: [] }) } });
   Logger.log(r.getContent());
 }

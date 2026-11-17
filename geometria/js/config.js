@@ -1,43 +1,36 @@
 /* =========================================================
    config.js — CONFIGURACIÓN DE LA DOCENTE
-   Modificá estos valores para adaptar la aventura a tu grupo.
+   Modificá estos valores para adaptar la evaluación a tu grupo.
    ========================================================= */
 window.APP_CONFIG = {
   NOMBRE_AVENTURA: 'La Liga de los Guardianes de la Geometría',
   CURSO: '7.º grado',
 
-  /* --- Registro de informes en Google Sheets (ver README, sección "Google Sheets") --- */
+  /* --- Registro de respuestas en Google Sheets (ver README, sección "Google Sheets") --- */
   // ID de la planilla: es la parte de la URL entre /d/ y /edit
-  // https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
-  GOOGLE_SHEET_ID: '1R3tD3-egtKugMQnStLbYADTOsaXFp0Js2aZjOhgwRbo',
+  GOOGLE_SHEET_ID: 'PEGAR_AQUI_EL_ID_DE_LA_PLANILLA',
   // URL de la aplicación web de Apps Script (termina en /exec)
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby1jlySY-26A0S8XYCR91scoxgRfTsHNjTJ5tYtOKHF-wv7l_1xBg1WcMTnaVbWjNt3pQ/exec',
+  APPS_SCRIPT_URL: 'PEGAR_AQUI_LA_URL_DEL_WEB_APP',
   // Clave compartida: debe ser IGUAL a la que figura en Code.gs
   CLAVE_ENVIO: 'guardianes-7mo',
+  // Enviar automáticamente las respuestas al terminar el desafío final
+  ENVIO_AUTOMATICO_AL_FINAL: true,
 
-  /* --- Progresión --- */
-  UMBRAL_DESBLOQUEO: 0.70,          // logro mínimo de una misión para desbloquear la siguiente (70 %)
-  MAX_INTENTOS: 3,                  // intentos por desafío (el 2.º error muestra una pista, el 3.º la solución)
+  /* --- Modo evaluación --- */
+  MEZCLAR_DESAFIOS: true,     // orden aleatorio de los desafíos dentro de cada misión
+  MEZCLAR_OPCIONES: true,     // orden aleatorio de las opciones, elementos a clasificar y pasos
+  MOSTRAR_PISTAS: false,      // true = muestra el botón "Pista" (no cambia el puntaje)
+  // Cada desafío se responde UNA sola vez y no se muestra si la respuesta es correcta.
 
-  /* --- Estrellas por misión (según el porcentaje de logro) --- */
-  ESTRELLAS: { tres: 0.90, dos: 0.70, una: 0.40, maxPistasParaTres: 1 },
+  /* --- Progresión: cada misión se habilita al COMPLETAR la anterior (no depende de los aciertos) --- */
 
-  /* --- Puntos de experiencia (XP) --- */
-  XP: {
-    primerIntento: 10,      // respuesta correcta en el primer intento
-    conReintento: 5,        // correcta después de leer la retroalimentación
-    recuperada: 6,          // correcta al primer intento en una misión de repaso
-    descuentoPista: 2,      // se descuenta si se usó una pista en ese desafío
-    minimoPorAcierto: 2,    // nunca menos que esto por un acierto
-    rondaJuego: 3,          // por ronda del juego "Cazadores" resuelta al primer intento (la mitad con reintento)
-    misionAprobada: 20,     // bonificación única al aprobar una misión
-    tresEstrellas: 15       // bonificación única al lograr 3 estrellas
-  },
+  /* --- Puntos de experiencia: premian la participación, no los aciertos --- */
+  XP: { porRespuesta: 10, misionCompleta: 20 },
 
-  /* --- Niveles de desempeño del informe (porcentaje de logro por contenido) --- */
+  /* --- Niveles de desempeño del informe docente (porcentaje de logro por contenido) --- */
   NIVELES: { consolidado: 0.80, enProceso: 0.50 },
-  MIN_ACTIVIDADES_COMENTARIO: 3,   // actividades mínimas de un contenido para generar comentarios
+  MIN_ACTIVIDADES_COMENTARIO: 3,   // respuestas mínimas de un contenido para asignarle un nivel
 
-  /* --- Modo docente: permite desbloquear todas las misiones para revisarlas --- */
+  /* --- Clave docente: ver el informe con resultados, habilitar misiones, cambiar de estudiante --- */
   CLAVE_DOCENTE: '7mo-geo'
 };

@@ -556,3 +556,23 @@ body.no-anim .confetti { display: none; }
   .rpanel { display: block !important; box-shadow: none; overflow: visible; padding: 0 0 1rem; page-break-inside: avoid; }
   .card { box-shadow: none; }
 }
+
+/* ---------- modo evaluación ---------- */
+.step.done { background: var(--cyan); }
+.node-done { position: absolute; top: -.3rem; right: -.3rem; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--cyan); color: var(--night); display: grid; place-items: center; }
+.node-done .ic { width: .95rem; height: .95rem; stroke-width: 3; }
+.map .zone { font-size: .78rem; letter-spacing: .04em; text-transform: none; color: var(--muted); max-width: 11rem; white-space: normal; text-align: center; }
+.intro.intro-one { grid-template-columns: minmax(0, 1fr); max-width: 60rem; width: 100%; margin: 0 auto; }
+.evalnote { display: flex; gap: .6rem; background: #fff2d3; color: #6e4700; border: 1px solid #ecd08f; border-radius: 12px; padding: .6rem .8rem; margin-top: .8rem; font-size: .95rem; }
+.evalnote .ic { margin-top: .15rem; }
+.sendst-dark { font-size: .9rem; color: var(--paper-muted); margin-top: .8rem; min-height: 1.2em; }
+.sendst-dark.ok { color: var(--ok); }
+.sendst-dark.bad { color: var(--bad); }
+.rt-det td { font-size: .8rem; }
+.rt-det td:nth-child(2) { width: 34%; }
+@media print { .rpanel[hidden] { display: block !important; } }
+.intro h2 { font-size: 1.6rem; }
+.intro .concepts { gap: .3rem; font-size: .95rem; }
+.intro .example { margin-top: .5rem; padding: .45rem .7rem; }
+.intro .evalnote { margin-top: .55rem; padding: .45rem .7rem; font-size: .88rem; }
+.intro .goal { margin: .3rem 0 .45rem; padding: .45rem .7rem; }

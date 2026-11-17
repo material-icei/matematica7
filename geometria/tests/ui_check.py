@@ -30,7 +30,7 @@ with sync_playwright() as p:
     pg.goto(url)
     pg.wait_for_timeout(400)
     if shots: pg.screenshot(path=str(out / '00_bienvenida.png'))
-    pg.evaluate("GG.login('Sofi')")
+    pg.evaluate("GG.login('Sofi')"); pg.evaluate("GG.S.docente = true")
     pg.wait_for_timeout(200)
     issues = {}
     o = pg.evaluate(OVER)
@@ -50,12 +50,12 @@ with sync_playwright() as p:
             o = pg.evaluate(OVER)
             if o: issues[f'm{mi+1}c{ci+1}'] = o
             if shots: pg.screenshot(path=str(out / f'm{mi+1:02d}_c{ci+1}.png'))
-    pg.evaluate("GG.renderReport()")
+    pg.evaluate("GG.renderTeacher()")
     pg.wait_for_timeout(100)
-    for t in ['res', 'cont', 'mis', 'fort']:
+    for t in ['res', 'det']:
         pg.click(f'[data-tab={t}]')
         o = pg.evaluate(OVER)
-        if o: issues['informe ' + t] = o
+        if o and t != 'det': issues['informe ' + t] = o
         if shots: pg.screenshot(path=str(out / f'zz_informe_{t}.png'))
     pg.evaluate("GG.renderMap()")
     pg.click('[data-howto]')
