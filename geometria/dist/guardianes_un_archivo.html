@@ -3194,20 +3194,22 @@ window.APP_CONFIG = {
       '<h1>La Liga de los <em>Guardianes</em> de la Geometría</h1>' +
       '<p class="lead">' + MIS.length + ' misiones con ' + totalItems + ' desafíos sobre ángulos, triángulos, Pitágoras, cuadriláteros y áreas. Respondé con atención: <b>cada desafío se responde una sola vez</b>.</p>' +
       (s ? '<div class="continue-card"><b>¡Hola de nuevo, ' + esc(s.alias) + '!</b><p>Tus respuestas están guardadas en esta computadora (' + MIS.filter((m) => s.misiones[m.id] && s.misiones[m.id].completa).length + ' de ' + MIS.length + ' misiones completas).</p><div class="row"><button class="btn btn-primary btn-big" data-continue>' + F.icon('play') + ' Continuar</button><button class="btn btn-ghost" data-other>Soy otro estudiante</button></div></div>' :
-        '<form class="start" novalidate><div class="field"><label for="alias">Tu nombre y apellido</label><input id="alias" maxlength="40" autocomplete="off" aria-describedby="alias-help alias-err"><span class="help" id="alias-help">Así te va a reconocer tu docente. No hace falta correo ni contraseña.</span><span class="err" id="alias-err" role="alert"></span></div>' +
-        '<div class="row"><button class="btn btn-primary btn-big" type="submit">' + F.icon('play') + ' Comenzar</button><button class="btn btn-ghost btn-big" type="button" data-howto>' + F.icon('help') + ' ¿Cómo funciona?</button></div></form>') +
+        '<div class="start"><div class="field"><label for="alias">Tu nombre y apellido</label><input id="alias" maxlength="40" autocomplete="off" aria-describedby="alias-help alias-err"><span class="help" id="alias-help">Así te va a reconocer tu docente. No hace falta correo ni contraseña.</span><span class="err" id="alias-err" role="alert"></span></div>' +
+        '<div class="row"><button class="btn btn-primary btn-big" type="button" data-start-eval>' + F.icon('play') + ' Comenzar</button><button class="btn btn-ghost btn-big" type="button" data-howto>' + F.icon('help') + ' ¿Cómo funciona?</button></div></div>') +
       '<p class="note">Tus respuestas se guardan solo en esta computadora y se envían a tu docente al terminar.</p></div><div class="welcome-art">' + welcomeArt() + '</div></main>');
     on(root, '[data-howto]', 'click', () => openHowto());
-    const form = root.querySelector('form.start');
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    const startBtn = root.querySelector('[data-start-eval]');
+    if (startBtn) {
+      // Sin <form>: algunos visores (vista previa, iframes) bloquean el envío de formularios.
+      const begin = () => {
         const v = $('#alias').value.trim().replace(/\s+/g, ' ');
         if (v.length < 2) { $('#alias-err').textContent = 'Escribí tu nombre (al menos 2 letras).'; $('#alias').focus(); return; }
         if (/@/.test(v)) { $('#alias-err').textContent = 'No escribas tu correo: alcanza con tu nombre.'; $('#alias').focus(); return; }
         S = fresh(v); save(); applyAnim(); renderMap(0);
-      });
-      setTimeout(() => $('#alias') && $('#alias').focus(), 50);
+      };
+      startBtn.addEventListener('click', begin);
+      $('#alias').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); begin(); } });
+      setTimeout(() => { try { $('#alias') && $('#alias').focus(); } catch (e) { } }, 50);
     }
     on(root, '[data-continue]', 'click', () => { S = s; applyAnim(); renderMap(); });
     on(root, '[data-other]', 'click', () => askChangeStudent(s));
@@ -3311,11 +3313,12 @@ window.APP_CONFIG = {
       '<div class="actions"><div class="spacer"></div><button class="btn btn-primary btn-big" data-start>Comenzar ' + F.icon('play') + '</button></div></section>' +
       (ej.fig ? '<section class="card paper visual">' + ej.fig() + '</section>' : '') + '</main>');
     on(root, '[data-exit]', 'click', () => renderMap(idxOf(m)));
-    on(root, '[data-start]', 'click', renderChallenge);
+    on(root, '[data-start]', 'click', () => renderChallenge());
     $('#intro-h').focus();
   }
   const TYPE_LABEL = { choice: 'Elegí una respuesta', multi: 'Marcá todas las correctas', number: 'Calculá', classify: 'Clasificá', select: 'Completá', order: 'Ordená los pasos' };
   function renderChallenge(forceId) {
+    if (typeof forceId !== 'string') forceId = null;
     const m = RUN.m, ms = mstate(m), pend = forceId ? [forceId] : pending(m);
     if (!pend.length) { endMission(); return; }
     const orig = m.desafios.find((c) => c.id === pend[0]), ch = shuffled(orig);
