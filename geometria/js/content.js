@@ -810,41 +810,37 @@
           num: "5.3",
           tipo: "number",
           origen: "m6c7",
-          fuente: "p. 21 · e y f",
-          consigna: "Calculá el lado que falta. Redondeá a los <b>centésimos</b>.",
-          fig: function () {
-              var o = F.rtri(40, 190, 4.5 * 26, 3.5 * 26, { v: '3,5 cm', h: '4,5 cm', c: '?' });
-              o += F.text(20, 30, 'e)', 'lbl lbl-b', 'start');
-              o += F.rtri(270, 190, 9.5 * 14, 8.12 * 14, { v: '?', h: '9,5 cm', c: '12,5 cm' });
-              o += F.text(250, 30, 'f)', 'lbl lbl-b', 'start');
-              return F.svg(460, 220, o, 'e) Triángulo rectángulo de catetos 3,5 y 4,5 centímetros. f) Triángulo rectángulo de hipotenusa 12,5 y cateto 9,5 centímetros.');
-            },
+          fuente: "p. 21 · e y f (valores modificados por la docente)",
+          layout: "widefig",
+          consigna: "Calculá el lado que falta de los triángulos de la siguiente imagen.",
+          fig: function anonymous(
+) {
+return '<img class="figimg fig-desafio_5-3_triangulos" src="img/desafio_5-3_triangulos.png" width="659" height="143" alt="e) Triángulo rectángulo de catetos 3,6 cm y 4,8 cm; falta la hipotenusa. f) Triángulo rectángulo de hipotenusa 12,5 cm y cateto 7,5 cm; falta el otro cateto." style="--w:659px">';
+},
           campos: [
             {
               et: "e) hipotenusa",
-              ans: 5.7,
-              tol: 0.02,
+              ans: 6,
               unidades: ["cm", "cm²", "m", "m²"],
               unidad: "cm",
               mal: [
-                { v: 8, fb: "Sumaste 3,5 + 4,5 sin elevar al cuadrado." },
-                { v: 32.5, fb: "32,5 es la hipotenusa al cuadrado. Calculá √32,5." }
+                { v: 8, fb: "Sumaste 3,6 + 4,8 sin elevar al cuadrado." },
+                { v: 36, fb: "36 es la hipotenusa al cuadrado. Calculá √36" }
               ]
             },
             {
               et: "f) cateto que falta",
-              ans: 8.12,
-              tol: 0.02,
+              ans: 10,
               unidades: ["cm", "cm²", "m", "m²"],
               unidad: "cm",
               mal: [
-                { v: 15.7, fb: "12,5 cm es la hipotenusa. Para el cateto se resta: 12,5² − 9,5²." },
-                { v: 66, fb: "66 es el cateto al cuadrado. Calculá √66." }
+                { v: 14.58, fb: "Para el cateto se resta: 12,5² − 7,5²." },
+                { v: 100, fb: "100 es el cateto al cuadrado. Calculá √100." }
               ]
             }
           ],
-          pista: "e) buscás la hipotenusa (sumá). f) buscás un cateto (restá). 12,5² = 156,25.",
-          explica: "e) 3,5² + 4,5² = 12,25 + 20,25 = 32,5 → √32,5 ≈ 5,70 cm. f) 12,5² − 9,5² = 156,25 − 90,25 = 66 → √66 ≈ 8,12 cm."
+          pista: "e) buscás la hipotenusa (sumá). f) buscás un cateto (restá).",
+          explica: "e) 3,6² + 4,8² = 12,96 + 23,04 = 32,5 → √36 = 6 cm. f) 12,5² − 7,5² = 156,25 − 56,25 = 100 → √100 = 10 cm."
         },
         {
           id: "m5c4",
@@ -1165,57 +1161,49 @@
           id: "m7c2",
           num: "7.2",
           tipo: "number",
-          origen: "m13c6",
-          fuente: "p. 40 · act. 62 b (figura 1)",
-          consigna: "Calculá el área de la figura 1. Realizá todos los cálculos necesarios.",
-          fig: function () {
-              var s = 26, x = 60, y = 220, o = F.poly([[x, y], [x + 6 * s, y], [x + 6 * s, y - 3 * s], [x, y - 6 * s]], 'shape shape-gray') + F.seg([x, y - 3 * s], [x + 6 * s, y - 3 * s], 'ln ln-dash ln-thin');
-              o += F.text(x + 3 * s, y + 16, '6 m', 'lbl lbl-s') + F.text(x - 10, y - 3 * s, '6 m', 'lbl lbl-s', 'end') + F.text(x + 6 * s + 10, y - 1.5 * s, '3 m', 'lbl lbl-s', 'start');
-              return F.svg(300, 250, o, 'Figura 1: trapecio rectángulo con lados verticales de 6 y 3 metros y base de 6 metros.');
-            },
+          fuente: "Figura propuesta por la docente",
+          layout: "narrowfig",
+          consigna: "Calculá el área de la parte sombreada de gris. Realizá todos los cálculos necesarios.",
+          fig: function anonymous(
+) {
+return '<img class="figimg fig-desafio_7-2_rectangulo" src="img/desafio_7-2_rectangulo.png" width="410" height="266" alt="Rectángulo de 11 dm por 8 dm sombreado de gris, con un rectángulo blanco interior de 9 dm por 6 dm." style="--w:410px">';
+},
           campos: [
             {
               et: "Área",
-              ans: 27,
-              unidades: ["cm", "cm²", "m", "m²"],
-              unidad: "m²",
+              ans: 34,
+              unidades: ["cm", "cm²", "dm", "dm²"],
+              unidad: "dm²",
               mal: [
-                { v: 36, fb: "Calculaste un cuadrado de 6 × 6, pero la parte de arriba es un triángulo." },
-                { v: 18, fb: "Calculaste solo el rectángulo de abajo (6 × 3). Falta el triángulo de arriba." },
-                { v: 45, fb: "El triángulo de arriba mide (6 × 3) ÷ 2. No te olvides de dividir por 2." }
+                { v: 88, fb: "Calculaste todo el rectángulo completo sin restar la parte que no está pintada." }
               ]
             }
-          ],
-          pista: "Podés partirla en un rectángulo de 6 m × 3 m y un triángulo de base 6 m y altura 3 m.",
-          explica: "Rectángulo: 6 × 3 = 18 m². Triángulo: (6 × 3) ÷ 2 = 9 m². Total: 27 m²."
+          ]
         },
         {
           id: "m7c3",
           num: "7.3",
           tipo: "number",
-          origen: "m13c7",
-          fuente: "p. 40 · act. 62 b (figura 2)",
-          consigna: "Calculá el área de la figura 2.",
-          fig: function () {
-              var s = 8.5, x = 50, y = 30, o = F.poly([[x, y], [x + 14 * s, y], [x + 14 * s, y + 3 * s], [x + 26 * s, y + 3 * s], [x + 26 * s, y + 15 * s], [x, y + 15 * s]], 'shape shape-gray');
-              o += F.seg([x + 14 * s, y + 3 * s], [x + 14 * s, y + 15 * s], 'ln ln-dash ln-thin');
-              o += F.text(x + 7 * s, y - 12, '14 m', 'lbl lbl-s') + F.text(x + 20 * s, y + 3 * s - 12, '12 m', 'lbl lbl-s') + F.text(x - 10, y + 7.5 * s, '15 m', 'lbl lbl-s', 'end') + F.text(x + 26 * s + 10, y + 9 * s, '12 m', 'lbl lbl-s', 'start');
-              return F.svg(340, 170, o, 'Figura 2: figura con forma de escalón. Arriba 14 metros, escalón de 12 metros, alto izquierdo 15 metros y alto derecho 12 metros.');
-            },
+          fuente: "Figura propuesta por la docente",
+          layout: "narrowfig",
+          consigna: "Calculá el área de la figura completa.",
+          fig: function anonymous(
+) {
+return '<img class="figimg fig-desafio_7-3_casa" src="img/desafio_7-3_casa.png" width="366" height="460" alt="Figura con forma de casa: chimenea de 2 cm por 2 cm, techo con forma de trapecio de 10 cm de ancho total, rectángulo inferior de 8 cm de base y 5 cm de altura; altura total 11 cm." style="--w:366px">';
+},
           campos: [
             {
               et: "Área",
-              ans: 354,
+              ans: 68,
               unidades: ["cm", "cm²", "m", "m²"],
-              unidad: "m²",
+              unidad: "cm²",
               mal: [
-                { v: 390, fb: "Usaste 15 m como altura de la parte derecha, pero mide 12 m." },
-                { v: 336, fb: "Revisá las medidas de cada parte: izquierda 14 × 15 y derecha 12 × 12." }
+                { v: 78, fb: "Usaste el 10 cm (el ancho total con los aleros del techo) como base del rectángulo inferior." },
+                { v: 110, fb: "Usaste la altura total para calcular el trapecio." }
               ]
             }
           ],
-          pista: "Dividila en dos rectángulos: el de la izquierda (14 × 15) y el de la derecha (12 × 12).",
-          explica: "14 × 15 = 210 m² y 12 × 12 = 144 m². Total: 354 m². (También: 26 × 15 − 12 × 3 = 390 − 36 = 354 m².)"
+          pista: "Dividila la figura y calculá el área por partes para luego sumarlas"
         },
         {
           id: "m7c4",
@@ -1253,54 +1241,22 @@
           id: "m7c5",
           num: "7.5",
           tipo: "number",
-          origen: "m14c5",
-          fuente: "p. 41 · act. 63",
-          consigna: "Cada cuadradito mide 1 cm de lado. Calculá el área del rectángulo MKLN y la del rombo.",
-          fig: function () { return figRombo(); },
-          campos: [
-            {
-              et: "Rectángulo MKLN",
-              ans: 24,
-              unidades: ["cm", "cm²", "m", "m²"],
-              unidad: "cm²",
-              mal: [
-                { v: 20, fb: "20 cm es el perímetro del rectángulo. El área es 6 × 4." }
-              ]
-            },
-            {
-              et: "Rombo",
-              ans: 12,
-              unidades: ["cm", "cm²", "m", "m²"],
-              unidad: "cm²",
-              mal: [
-                { v: 24, fb: "El rombo ocupa la mitad del rectángulo." },
-                { v: 6, fb: "Dividiste por 4. El rombo ocupa la mitad, no un cuarto." }
-              ]
-            }
-          ],
-          pista: "El rectángulo mide 6 cm × 4 cm. El rombo es la mitad.",
-          explica: "Rectángulo: 6 × 4 = 24 cm². Rombo: (6 × 4) ÷ 2 = 12 cm²."
-        },
-        {
-          id: "m7c6",
-          num: "7.6",
-          tipo: "number",
           fuente: "p. 42 · act. 64 (modificada)",
           layout: "nofig",
           consigna: "a) Se recorta un escudo con forma de rombo (diagonales de 12 cm y 20 cm) a partir de un retazo rectangular de tela verde de 15 cm × 25 cm. ¿Cuántos centímetros cuadrados de tela sobran como desperdicio?<br>b) Un cantero con forma de rombo tiene una superficie de 12 m² y una de sus diagonales mide 4 m. ¿Cuánto mide la otra diagonal?",
           campos: [
             {
-              et: "a) Tela que sobra",
+              et: "a) Tela verde",
               ans: 255,
               unidades: ["cm", "cm²", "m", "m²"],
               unidad: "cm²",
               mal: [
-                { v: 120, fb: "Calculaste el área del rombo, pero olvidaste restarla del retazo." },
+                { v: 20, fb: "Calculaste el área del rombo, pero olvidaste restarla del retazo." },
                 { v: 135, fb: "Olvidaste dividir por 2 el área del rombo (375 − 240)." }
               ]
             },
             {
-              et: "b) Otra diagonal",
+              et: "b) Superficie del cantero",
               ans: 6,
               unidades: ["cm", "cm²", "m", "m²"],
               unidad: "m",
@@ -1311,11 +1267,11 @@
             }
           ],
           pista: "A = (D × d) ÷ 2. Cuidado con las unidades: en a) son cm y en b) son m.",
-          explica: "a) Retazo: 15 × 25 = 375 cm². Escudo: (12 × 20) ÷ 2 = 120 cm². Sobran 375 − 120 = 255 cm². b) 12 = (4 × d) ÷ 2 → 4 × d = 24 → d = 6 m."
+          explica: "a) (12 × 20) ÷ 2 = 240 ÷ 2 = 120 cm². b) (6 × 4) ÷ 2 = 24 ÷ 2 = 12 m²."
         },
         {
-          id: "m7c7",
-          num: "7.7",
+          id: "m7c6",
+          num: "7.6",
           tipo: "number",
           origen: "m14c9",
           fuente: "p. 43 (con la figura a de la act. 60, p. 39)",
@@ -1524,7 +1480,7 @@
   ];
 
   /* ---------- Notas para la docente (se muestran en el Área docente) ---------- */
-  var PENDIENTES = ["Misiones 1, 3 y 5: el listado corregido no tiene título; se usaron «Ángulos», «Bisectriz» y «Teorema de Pitágoras».", "Desafíos 1.3 y 1.4: la solución explicada todavía mencionaba las filas eliminadas (82° y 108°); se actualizó.", "Desafío 1.5: decía «Con los mismos ángulos…»; como el orden es aleatorio y el desafío anterior se quitó, se cambió por «Observá los ángulos…».", "Desafío 2.4: se reescribió la solución explicada para el ángulo RŜQ (su opuesto es NŜU = α).", "Desafío 3.2: decía «En el problema de la torre de control…»; con orden aleatorio se agregaron los datos para que se entienda solo.", "Desafío 4.2: se actualizó la solución explicada (ya no hay triángulo E). Ningún ítem queda como acutángulo.", "Desafío 5.2: el listado dice «Respuesta numérica», pero es de clasificación (cateto / hipotenusa); se mantuvo como clasificación.", "Desafío 6.3: algunas opciones sirven para más de un cuadrilátero (por ej., el paralelogramo común también tiene dos pares de lados iguales). Se agregó «Usá cada opción una sola vez», con lo que la única asignación posible es la del listado.", "Desafío 6.7: se quitaron los espacios «porque ___», que no tenían opciones en el listado.", "Desafío 7.6 a: el error previsto «20» no coincide con el área del rombo (120 cm²); se usó 120. En b se renombró el campo a «Otra diagonal» y se reescribió la solución.", "Las pistas, soluciones y retroalimentaciones se conservan en este archivo, pero en modo evaluación no se muestran a los estudiantes."];
+  var PENDIENTES = ["Misiones 1, 3 y 5: el listado corregido no tiene título; se usaron «Ángulos», «Bisectriz» y «Teorema de Pitágoras».", "Desafíos 1.3 y 1.4: la solución explicada todavía mencionaba las filas eliminadas (82° y 108°); se actualizó.", "Desafío 1.5: decía «Con los mismos ángulos…»; como el orden es aleatorio y el desafío anterior se quitó, se cambió por «Observá los ángulos…».", "Desafío 2.4: se reescribió la solución explicada para el ángulo RŜQ (su opuesto es NŜU = α).", "Desafío 3.2: decía «En el problema de la torre de control…»; con orden aleatorio se agregaron los datos para que se entienda solo.", "Desafío 4.2: se actualizó la solución explicada (ya no hay triángulo E). Ningún ítem queda como acutángulo.", "Desafío 5.2: el listado dice «Respuesta numérica», pero es de clasificación (cateto / hipotenusa); se mantuvo como clasificación.", "Desafío 6.3: algunas opciones sirven para más de un cuadrilátero (por ej., el paralelogramo común también tiene dos pares de lados iguales). Se agregó «Usá cada opción una sola vez», con lo que la única asignación posible es la del listado.", "Desafío 6.7: se quitaron los espacios «porque ___», que no tenían opciones en el listado.", "Desafíos 5.3, 7.2 y 7.3: se usan las imágenes originales del documento de la docente (la del 7.2, reemplazada por la versión de mayor resolución que envió la docente) y sus valores (5.3: 6 cm y 10 cm; 7.2: 34 dm²; 7.3: 68 cm²).", "Desafío 5.3: en la solución explicada dice «12,96 + 23,04 = 32,5 → √36»; la suma da 36. Se dejó el texto como está (no lo ven los estudiantes). El error previsto «8» corresponde a sumar 3,6 + 4,8, que da 8,4: se dejó el valor del documento. Para el error «se resta 12,5² − 7,5²» el documento no indica valor; se registra 14,58 (sumar los cuadrados).", "Desafío 7.3: los errores previstos no traen valor; se registran 78 cm² (base 10 cm en el rectángulo) y 110 cm² (altura 11 cm en el trapecio).", "Desafío 7.5: se respetaron los valores y nombres del documento (error previsto «20», campo «Superficie del cantero»).", "Se quitó el desafío del rectángulo MKLN; la evaluación tiene ahora 40 desafíos.", "Las pistas, soluciones y retroalimentaciones se conservan en este archivo, pero en modo evaluación no se muestran a los estudiantes."];
 
   global.CONTENIDOS = { misiones: M, contenidos: CONTENIDOS, insignias: INSIGNIAS, pendientes: PENDIENTES, ficha: FICHA, hat: hat };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -576,3 +576,8 @@ body.no-anim .confetti { display: none; }
 .intro .example { margin-top: .5rem; padding: .45rem .7rem; }
 .intro .evalnote { margin-top: .55rem; padding: .45rem .7rem; font-size: .88rem; }
 .intro .goal { margin: .3rem 0 .45rem; padding: .45rem .7rem; }
+/* imágenes originales del documento de la docente */
+.visual .figimg { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: auto; }
+.visual .fig-desafio_7-2_rectangulo { width: min(100%, calc(var(--w) * 1.3)); }
+.visual .fig-desafio_7-3_casa { height: 100%; width: auto; }
+.visual .fig-desafio_5-3_triangulos { width: 100%; }

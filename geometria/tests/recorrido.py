@@ -80,10 +80,10 @@ with sync_playwright() as p:
     expect('configuró' in pg.inner_text('#sendst'), 'final: aviso de planilla sin configurar')
     expect(pg.locator('[data-send]:not([hidden])').count() == 0, 'final: sin botón de envío manual')
     rep = pg.evaluate('GG.buildReport()')
-    expect(rep['respondidas'] == rep['total'] == 41, 'informe: 41 respondidas')
+    expect(rep['respondidas'] == rep['total'] == 40, 'informe: 40 respondidas')
     expect(rep['incorrectas'] == len(MAL), f"informe: {len(MAL)} no correctas (hay {rep['incorrectas']})")
     pay = pg.evaluate('GG.payload()')
-    expect(len(pay['respuestas']) == 41 and all(x['respuesta'] for x in pay['respuestas']), 'payload: 41 respuestas con texto')
+    expect(len(pay['respuestas']) == 40 and all(x['respuesta'] for x in pay['respuestas']), 'payload: 40 respuestas con texto')
     print('Ejemplos de respuestas:'); [print('  ', x['num'], x['resultado'], '|', x['respuesta'][:70], '| correcta:', x['correcta'][:50]) for x in pay['respuestas'] if x['num'] in MAL]
     # vista del estudiante: sin resultados
     pg.click('[data-report]'); pg.wait_for_timeout(100)

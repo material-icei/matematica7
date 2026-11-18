@@ -48,7 +48,7 @@ Esta versión se usa como **herramienta de evaluación de conocimientos**:
 - **Avance:** cada misión se habilita al **completar** la anterior, sin importar los aciertos. El desafío final, al completar las siete.
 - Las pistas se pueden volver a mostrar con `MOSTRAR_PISTAS: true` en `js/config.js` (no afectan el puntaje), y la mezcla se puede desactivar con `MEZCLAR_DESAFIOS` / `MEZCLAR_OPCIONES`.
 
-## 4. Secuencia (8 misiones, 41 desafíos)
+## 4. Secuencia (8 misiones, 40 desafíos)
 
 Corresponde al listado corregido por la docente. El número de cada desafío (1.1, 1.2…) es el de ese listado y es el que figura en el informe y en la planilla.
 
@@ -58,9 +58,9 @@ Corresponde al listado corregido por la docente. El número de cada desafío (1.
 | 2 | Encrucijada de rectas | 5 · adyacentes, opuestos por el vértice, α y β, opuesto a RŜQ, adyacentes a β |
 | 3 | Bisectriz | 4 · torre de control, ángulos con la bisectriz, construcción, aôc / aôd / côd |
 | 4 | Triángulos | 4 · clasificación por lados y por ángulos, isósceles, triángulo abc |
-| 5 | Teorema de Pitágoras | 4 · cuerda de 12 nudos, catetos e hipotenusa, lados e) y f), escalera |
+| 5 | Teorema de Pitágoras | 4 · cuerda de 12 nudos, catetos e hipotenusa, lados e) y f) (imagen del documento), escalera |
 | 6 | Familias de cuadriláteros | 8 · elementos, clasificación, características, pistas, ángulos, rombo, ¿quién dice la verdad?, romboide |
-| 7 | Área y perímetro | 7 · unidades, figuras 1 y 2, error de Tomi, MKLN, escudo y cantero, trapecio |
+| 7 | Área y perímetro | 6 · unidades, rectángulo sombreado (dm²), casa, error de Tomi, escudo y cantero, trapecio |
 | 8 | Desafío final | 4 · cuerda, terreno, verdadero/falso, rombo |
 
 ## 5. Resultados: informe docente y Google Sheets
@@ -77,7 +77,7 @@ Corresponde al listado corregido por la docente. El número de cada desafío (1.
 
 El estudiante solo ve su **progreso**: misiones completas, desafíos respondidos y XP, sin resultados.
 
-**Nota (1 a 10):** nota = % de logro sobre los 41 desafíos × 10, con mínimo 1 y redondeada a entero (por ejemplo, 60 % → 6; 85 % → 9). Se calcula al completar las 8 misiones. El mínimo y los decimales se cambian en `NOTA` de `js/config.js`. La planilla también registra el puntaje sobre 41.
+**Nota (1 a 10):** nota = % de logro sobre los 40 desafíos × 10, con mínimo 1 y redondeada a entero (por ejemplo, 60 % → 6; 85 % → 9). Se calcula al completar las 8 misiones. El mínimo y los decimales se cambian en `NOTA` de `js/config.js`. La planilla también registra el puntaje (sobre 40).
 
 **Envío único:** las respuestas se envían **una sola vez**, automáticamente, al completar la misión 8. No hay botón de envío en «Mi progreso» ni en el informe docente. Si el envío falla (por ejemplo, sin internet), en la pantalla final y en «Mi progreso» aparece «Reintentar envío», que desaparece cuando el envío queda registrado. Cada estudiante tiene un identificador de envío fijo, y la planilla descarta cualquier envío repetido con el mismo identificador.
 
@@ -87,7 +87,7 @@ El estudiante solo ve su **progreso**: misiones completas, desafíos respondidos
 3. *Implementar → Nueva implementación → Aplicación web*: ejecutar como **Yo**, acceso **Cualquier persona**. Copiá la URL `/exec`.
 4. En `js/config.js` completá `GOOGLE_SHEET_ID` y `APPS_SCRIPT_URL`.
 
-Se crean cuatro hojas: **Informes** (una fila por estudiante, con las columnas **Puntaje (sobre 41)** y **Nota (1-10)**), **Por contenido**, **Por misión** y **Respuestas** (una fila por desafío, con la respuesta dada, la correcta y el resultado). Si ya tenías publicada la versión anterior de `Code.gs`, reemplazala por esta y creá una nueva implementación.
+Se crean cuatro hojas: **Informes** (una fila por estudiante, con las columnas **Puntaje** (sobre el total de desafíos) y **Nota (1-10)**), **Por contenido**, **Por misión** y **Respuestas** (una fila por desafío, con la respuesta dada, la correcta y el resultado). Si ya tenías publicada la versión anterior de `Code.gs`, reemplazala por esta y creá una nueva implementación.
 
 **Cambio de estudiante en la misma computadora:** «Soy otro estudiante» borra las respuestas solo si ya fueron enviadas; si no, pide la clave docente.
 
@@ -112,22 +112,26 @@ desplazamiento a 1366 × 768 (solo el informe docente y la ayuda pueden desplaza
 
 ## 9. Notas sobre las correcciones aplicadas
 
-Estas notas también figuran en el Área docente:
+Estas notas también figuran en el Área docente.
 
-- **Misiones 1, 3 y 5:** el listado corregido no tiene título; se usaron «Ángulos», «Bisectriz» y «Teorema de Pitágoras».
-- **1.3 y 1.4:** se actualizó la solución explicada, que todavía mencionaba las filas eliminadas.
-- **1.5 y 3.2:** remitían a un desafío anterior; como el orden es aleatorio, se reescribieron para que se entiendan solos.
-- **2.4:** se reescribió la solución explicada.
-- **4.2:** se actualizó la solución explicada. Ningún ítem queda como acutángulo.
-- **5.2:** figura como «Respuesta numérica», pero es de clasificación (cateto / hipotenusa).
-- **6.3:** varias opciones sirven para más de un cuadrilátero. Se agregó «Usá cada opción una sola vez», que deja como única asignación posible la del listado.
+**Segunda corrección (imágenes y valores del documento):**
+- **5.3, 7.2 y 7.3:** se usan las **imágenes originales** del documento (carpeta `img/`) con sus valores: 6 cm y 10 cm; 34 dm²; 68 cm².
+- **5.3, solución explicada:** dice «12,96 + 23,04 = 32,5 → √36», pero la suma da 36. Se dejó como está, porque no la ven los estudiantes.
+- **5.3, errores previstos:** el error «8» corresponde a sumar 3,6 + 4,8, que en realidad da 8,4; se dejó el valor del documento. Para el error «se resta 12,5² − 7,5²» el documento no trae valor y se registra 14,58.
+- **7.3, errores previstos:** no traen valor; se registran 78 cm² y 110 cm².
+- **7.5:** se respetaron los valores y nombres del documento (error previsto «20», campo «Superficie del cantero»).
+- Se quitó el desafío del rectángulo MKLN: la evaluación tiene **40 desafíos**.
+- Como cambiaron los desafíos, el progreso guardado con la versión anterior en cada computadora se reinicia.
+
+**Primera corrección:**
+- **Títulos:** las misiones 1, 3 y 5 no tenían título; se usaron «Ángulos», «Bisectriz» y «Teorema de Pitágoras».
+- **1.5 y 3.2:** se reescribieron para que se entiendan solos con el orden aleatorio.
+- **6.3:** se agregó «Usá cada opción una sola vez».
 - **6.7:** se quitaron los espacios «porque ___», que no tenían opciones.
-- **7.6 a:** el error previsto «20» no coincide con el área del rombo (120 cm²); se usó 120.
-- **7.6 b:** el campo pasó a llamarse «Otra diagonal» y se reescribió la solución.
 
 ## 10. Pruebas realizadas
 
-- `node tests/validar_contenidos.js`: las respuestas correctas de los 41 desafíos se aceptan, los errores previstos y las unidades incorrectas se rechazan, y los resultados se recalculan por separado.
+- `node tests/validar_contenidos.js`: las respuestas correctas de los 40 desafíos se aceptan, los errores previstos y las unidades incorrectas se rechazan, y los resultados se recalculan por separado.
 - `python3 tests/ui_check.py 1366 650`: recorre todas las pantallas al tamaño visible de una Chromebook buscando errores y desbordes.
 - `python3 tests/envio_unico.py`: simula la planilla y verifica que el resultado se registre una sola vez (también si el primer envío falla y se reintenta) y que la nota sea correcta.
 - `python3 tests/recorrido.py`: completa las 8 misiones usando solo la interfaz, con errores a propósito. Verifica:

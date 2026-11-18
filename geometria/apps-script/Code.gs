@@ -18,7 +18,7 @@ const SHEET_ID_FIJO = '';   // opcional: 'ID_DE_TU_PLANILLA'
 
 const HOJAS = {
   informes: ['Recibido', 'Envío', 'Estudiante', 'Curso', 'Fecha (dispositivo)', 'Tiempo (min)', 'Misiones completas', 'Respondidas', 'Total',
-    'Correctas', 'No correctas', '% correctas', '% logro', 'Puntaje (sobre 41)', 'Nota (1-10)', 'XP', 'Insignias', 'Modo docente'],
+    'Correctas', 'No correctas', '% correctas', '% logro', 'Puntaje', 'Nota (1-10)', 'XP', 'Insignias', 'Modo docente'],
   contenido: ['Recibido', 'Envío', 'Estudiante', 'Contenido', 'Respondidas', 'Correctas', '% logro', 'Nivel'],
   mision: ['Recibido', 'Envío', 'Estudiante', 'Misión', 'Completa', 'Respondidas', 'Correctas', '% logro'],
   respuestas: ['Recibido', 'Envío', 'Estudiante', 'N.º', 'Misión', 'Contenido', 'Consigna', 'Respuesta del estudiante', 'Respuesta correcta', 'Resultado', 'Puntaje (0 a 1)']

@@ -8,16 +8,16 @@ window.APP_CONFIG = {
 
   /* --- Registro de respuestas en Google Sheets (ver README, sección "Google Sheets") --- */
   // ID de la planilla: es la parte de la URL entre /d/ y /edit
-  GOOGLE_SHEET_ID: '1R3tD3-egtKugMQnStLbYADTOsaXFp0Js2aZjOhgwRbo',
+  GOOGLE_SHEET_ID: 'PEGAR_AQUI_EL_ID_DE_LA_PLANILLA',
   // URL de la aplicación web de Apps Script (termina en /exec)
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxhqaWA29iWxUEH_vEVgxo7wI2AIhsofY9-LzgjyvisK2nU-h2TurE1JsDB9Mbn1skOgw/exec',
+  APPS_SCRIPT_URL: 'PEGAR_AQUI_LA_URL_DEL_WEB_APP',
   // Clave compartida: debe ser IGUAL a la que figura en Code.gs
   CLAVE_ENVIO: 'guardianes-7mo',
   // Las respuestas se envían UNA sola vez, automáticamente, al completar las 8 misiones.
 
   /* --- Nota en escala de 1 a 10 (columna "Nota (1-10)" de la planilla) --- */
-  // nota = % de logro × 10, con mínimo 1 
-  NOTA: { minima: 1, maxima: 10, decimales: 2 },   // decimales: 0 = nota entera; 1 = con un decimal
+  // nota = % de logro × 10, con mínimo 1 (ej.: 60 % → 6; 85 % → 8,5 → 9 si se redondea a enteros)
+  NOTA: { minima: 1, maxima: 10, decimales: 0 },   // decimales: 0 = nota entera; 1 = con un decimal
 
   /* --- Modo evaluación --- */
   MEZCLAR_DESAFIOS: true,     // orden aleatorio de los desafíos dentro de cada misión

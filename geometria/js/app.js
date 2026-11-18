@@ -8,7 +8,7 @@
   'use strict';
   const CFG = window.APP_CONFIG, C = window.CONTENIDOS, E = window.Engine, F = window.F;
   const MIS = C.misiones;
-  const KEY = 'guardianes7mo_eval_v2';
+  const KEY = 'guardianes7mo_eval_v3';   // cambia al modificar los desafíos: evita mezclar respuestas de versiones distintas
   const app = document.getElementById('app');
   const modalRoot = document.getElementById('modal-root');
   let storageOK = true, S = null, RUN = null, CUR = null;
@@ -261,7 +261,7 @@
     const orig = m.desafios.find((c) => c.id === pend[0]), ch = shuffled(orig);
     CUR = { ch: ch, orig: orig, done: false };
     const pos = ms.orden.indexOf(orig.id) + 1, figFn = orig.fig;
-    const layout = figFn && orig.layout !== 'nofig' ? (orig.layout === 'narrowfig' ? 'narrowfig' : '') : 'nofig';
+    const layout = figFn && orig.layout !== 'nofig' ? (orig.layout === 'narrowfig' ? 'narrowfig' : orig.layout === 'widefig' ? 'wide' : '') : 'nofig';
     const last = pending(m).length <= 1;
     const root = screen(topbarPlay() + '<main class="play ' + layout + '">' +
       (layout !== 'nofig' ? '<section class="card paper visual" id="vis"></section>' : '') +

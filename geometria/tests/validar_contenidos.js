@@ -13,7 +13,7 @@ const ok = (c, m) => { checks++; if (!c) { fails++; console.log('  ✗ ' + m); }
 const ids = new Set();
 C.misiones.forEach((m) => m.desafios.forEach((ch) => {
   ok(!ids.has(ch.id), 'id único ' + ch.id); ids.add(ch.id);
-  if (ch.fig) { const s = ch.fig(); ok(/^<svg/.test(s) && !/NaN|undefined/.test(s), ch.id + ': figura válida'); }
+  if (ch.fig) { const s = ch.fig(); ok((/^<svg/.test(s) || (/^<img/.test(s) && fs.existsSync(path.join(__dirname, '..', s.match(/src="([^"]+)"/)[1])))) && !/NaN|undefined/.test(s), ch.id + ': figura válida'); }
   ok(E.validate(ch, E.correct(ch)).ok, ch.id + ' (' + ch.num + '): respuesta correcta aceptada');
   if (ch.tipo === 'choice') { ok(ch.ops.filter((o) => o.ok).length === 1, ch.id + ': una sola correcta'); ch.ops.forEach((o, i) => { if (!o.ok) ok(!E.validate(ch, i).ok, ch.id + ': opción ' + i + ' rechazada'); }); }
   if (ch.tipo === 'number') ch.campos.forEach((f, i) => {
@@ -28,9 +28,9 @@ eq('1.3', [90 - 23, 90 - 19]); eq('1.4', [180 - 96, 180 - 147]);
 eq('2.2', [130, 50]); eq('2.3', [180 - 154, 77]);
 eq('3.2', [30]); eq('3.4', [118, 59, 59]);
 eq('4.3', [67, 46]); eq('4.4', [61, 64, 55]);
-eq('5.3', [Math.hypot(3.5, 4.5), Math.sqrt(12.5 ** 2 - 9.5 ** 2)], 0.006); eq('5.4', [Math.sqrt(2.5 ** 2 - 0.7 ** 2)], 1e-9);
+eq('5.3', [Math.hypot(3.6, 4.8), Math.sqrt(12.5 ** 2 - 7.5 ** 2)], 1e-9); eq('5.4', [Math.sqrt(2.5 ** 2 - 0.7 ** 2)], 1e-9);
 eq('6.5', [30, 46]); eq('6.6', [118, 62, 118]); eq('6.8', [80]);
-eq('7.2', [27]); eq('7.3', [354]); eq('7.5', [24, 12]); eq('7.6', [15 * 25 - 12 * 20 / 2, 12 * 2 / 4]); eq('7.7', [2]);
+eq('7.2', [11 * 8 - 9 * 6]); eq('7.3', [2 * 2 + (10 + 2) * (11 - 2 - 5) / 2 + 8 * 5]); eq('7.5', [15 * 25 - 12 * 20 / 2, 12 * 2 / 4]); eq('7.6', [2]);
 eq('8.1', [12, 6]); eq('8.2', [12.5, 31, 42], 1e-9); eq('8.4', [24, 5, 20]);
 const tot = C.misiones.reduce((a, m) => a + m.desafios.length, 0);
 console.log(C.misiones.length + ' misiones · ' + tot + ' desafíos · ' + checks + ' comprobaciones · ' + fails + ' fallas');
