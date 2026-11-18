@@ -77,7 +77,9 @@ Corresponde al listado corregido por la docente. El número de cada desafío (1.
 
 El estudiante solo ve su **progreso**: misiones completas, desafíos respondidos y XP, sin resultados.
 
-**Envío:** al terminar el desafío final las respuestas se envían solas (si la planilla está configurada). También se pueden enviar desde «Mi progreso».
+**Nota (1 a 10):** nota = % de logro sobre los 41 desafíos × 10, con mínimo 1 y redondeada a entero (por ejemplo, 60 % → 6; 85 % → 9). Se calcula al completar las 8 misiones. El mínimo y los decimales se cambian en `NOTA` de `js/config.js`. La planilla también registra el puntaje sobre 41.
+
+**Envío único:** las respuestas se envían **una sola vez**, automáticamente, al completar la misión 8. No hay botón de envío en «Mi progreso» ni en el informe docente. Si el envío falla (por ejemplo, sin internet), en la pantalla final y en «Mi progreso» aparece «Reintentar envío», que desaparece cuando el envío queda registrado. Cada estudiante tiene un identificador de envío fijo, y la planilla descarta cualquier envío repetido con el mismo identificador.
 
 **Configurar la planilla (una sola vez):**
 1. Creá una planilla de Google y copiá su ID (la parte de la URL entre `/d/` y `/edit`).
@@ -85,7 +87,7 @@ El estudiante solo ve su **progreso**: misiones completas, desafíos respondidos
 3. *Implementar → Nueva implementación → Aplicación web*: ejecutar como **Yo**, acceso **Cualquier persona**. Copiá la URL `/exec`.
 4. En `js/config.js` completá `GOOGLE_SHEET_ID` y `APPS_SCRIPT_URL`.
 
-Se crean cuatro hojas: **Informes** (una fila por envío), **Por contenido**, **Por misión** y **Respuestas** (una fila por desafío, con la respuesta dada, la correcta y el resultado). Si ya tenías publicada la versión anterior de `Code.gs`, reemplazala por esta y creá una nueva implementación.
+Se crean cuatro hojas: **Informes** (una fila por estudiante, con las columnas **Puntaje (sobre 41)** y **Nota (1-10)**), **Por contenido**, **Por misión** y **Respuestas** (una fila por desafío, con la respuesta dada, la correcta y el resultado). Si ya tenías publicada la versión anterior de `Code.gs`, reemplazala por esta y creá una nueva implementación.
 
 **Cambio de estudiante en la misma computadora:** «Soy otro estudiante» borra las respuestas solo si ya fueron enviadas; si no, pide la clave docente.
 
@@ -127,6 +129,7 @@ Estas notas también figuran en el Área docente:
 
 - `node tests/validar_contenidos.js`: las respuestas correctas de los 41 desafíos se aceptan, los errores previstos y las unidades incorrectas se rechazan, y los resultados se recalculan por separado.
 - `python3 tests/ui_check.py 1366 650`: recorre todas las pantallas al tamaño visible de una Chromebook buscando errores y desbordes.
+- `python3 tests/envio_unico.py`: simula la planilla y verifica que el resultado se registre una sola vez (también si el primer envío falla y se reintenta) y que la nota sea correcta.
 - `python3 tests/recorrido.py`: completa las 8 misiones usando solo la interfaz, con errores a propósito. Verifica:
   - el orden aleatorio;
   - que cada respuesta se registre una sola vez;

@@ -18,7 +18,7 @@ const SHEET_ID_FIJO = '';   // opcional: 'ID_DE_TU_PLANILLA'
 
 const HOJAS = {
   informes: ['Recibido', 'Envío', 'Estudiante', 'Curso', 'Fecha (dispositivo)', 'Tiempo (min)', 'Misiones completas', 'Respondidas', 'Total',
-    'Correctas', 'No correctas', '% correctas', '% logro', 'XP', 'Insignias', 'Modo docente'],
+    'Correctas', 'No correctas', '% correctas', '% logro', 'Puntaje (sobre 41)', 'Nota (1-10)', 'XP', 'Insignias', 'Modo docente'],
   contenido: ['Recibido', 'Envío', 'Estudiante', 'Contenido', 'Respondidas', 'Correctas', '% logro', 'Nivel'],
   mision: ['Recibido', 'Envío', 'Estudiante', 'Misión', 'Completa', 'Respondidas', 'Correctas', '% logro'],
   respuestas: ['Recibido', 'Envío', 'Estudiante', 'N.º', 'Misión', 'Contenido', 'Consigna', 'Respuesta del estudiante', 'Respuesta correcta', 'Resultado', 'Puntaje (0 a 1)']
@@ -42,7 +42,7 @@ function doPost(e) {
     }
     const ahora = new Date(), alias = String(d.alias || '').slice(0, 60);
     hInf.appendRow([ahora, d.envioId, alias, d.curso, d.fecha, d.tiempoMin, d.misionesCompletadas, d.respondidas, d.total,
-      d.correctas, d.incorrectas, d.pctCorrectas, d.logro, d.xp, d.insignias, d.modoDocente ? 'Sí' : 'No']);
+      d.correctas, d.incorrectas, d.pctCorrectas, d.logro, d.puntos, d.nota, d.xp, d.insignias, d.modoDocente ? 'Sí' : 'No']);
     agregar(hCon, (d.porContenido || []).map(function (c) { return [ahora, d.envioId, alias, c.contenido, c.respondidas, c.correctas, c.logro, c.nivel]; }));
     agregar(hMis, (d.porMision || []).map(function (m) { return [ahora, d.envioId, alias, m.mision, m.completa ? 'Sí' : 'No', m.respondidas, m.correctas, m.logro]; }));
     agregar(hRes, (d.respuestas || []).map(function (r) { return [ahora, d.envioId, alias, "'" + r.num, r.mision, r.contenido, r.consigna, r.respuesta, r.correcta, r.resultado, r.puntaje]; }));
@@ -72,11 +72,10 @@ function doGet() {
 
 function hoja(ss, nombre, encabezados) {
   let h = ss.getSheetByName(nombre);
-  if (!h) {
-    h = ss.insertSheet(nombre);
-    h.getRange(1, 1, 1, encabezados.length).setValues([encabezados]).setFontWeight('bold').setBackground('#fff2cc');
-    h.setFrozenRows(1);
-  }
+  if (!h) { h = ss.insertSheet(nombre); h.setFrozenRows(1); }
+  // escribe (o actualiza) la fila de encabezados, por si la hoja venía de una versión anterior
+  const actual = h.getRange(1, 1, 1, encabezados.length).getValues()[0];
+  if (actual.join('|') !== encabezados.join('|')) h.getRange(1, 1, 1, encabezados.length).setValues([encabezados]).setFontWeight('bold').setBackground('#fff2cc');
   return h;
 }
 

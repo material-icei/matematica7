@@ -152,11 +152,9 @@
     on(root, '[data-continue]', 'click', () => { S = s; applyAnim(); renderMap(); });
     on(root, '[data-other]', 'click', () => askChangeStudent(s));
   }
-  function sentAfterLastAnswer(st) {
-    const last = Math.max(0, ...MIS.map((m) => { const x = st.misiones[m.id]; return x ? Math.max(0, ...Object.values(x.resp).map((r) => r.t || 0)) : 0; }));
-    const env = (st.envios || []).filter((e) => e.estado !== 'error');
-    return env.length && env[env.length - 1].t >= last;
-  }
+  /** el resultado ya quedó registrado en la planilla (se envía una sola vez) */
+  function alreadySent(st) { return ((st || S).envios || []).some((e) => e.estado === 'recibido' || e.estado === 'sin confirmación'); }
+  const sentAfterLastAnswer = alreadySent;
   function askChangeStudent(st) {
     const ok = sentAfterLastAnswer(st);
     const body = '<p>Se van a borrar de esta computadora las respuestas de <b>' + esc(st.alias) + '</b>.</p>' +
@@ -186,6 +184,7 @@
   }
   function renderMap(sel) {
     RUN = null; CUR = null;
+    if (MIS.every(complete) && !alreadySent() && configured() && navigator.onLine) sendReport();
     if (sel == null) { sel = MIS.findIndex((m, i) => unlocked(i) && !complete(m)); if (sel < 0) sel = MIS.length - 1; }
     let path = '', done = '';
     POS.forEach((p, i) => { path += (i ? 'L' : 'M') + p[0] + ' ' + p[1]; });
@@ -299,6 +298,7 @@
     if (first) { ms.completa = true; ms.fin = Date.now(); RUN.gained += CFG.XP.misionCompleta; }
     const nuevos = checkBadges(); save();
     const allDone = MIS.every(complete);
+    if (allDone) sendReport();
     const nextUnlocked = i + 1 < MIS.length && unlocked(i + 1);
     const root = screen(topbarPlay() + '<main class="endwrap"><section class="card paper endcard" id="endcard">' +
       '<div class="eyebrow" style="color:var(--violet-ink)">Misión ' + (i + 1) + ' · ' + esc(m.titulo) + '</div>' +
@@ -327,13 +327,13 @@
       '<h2 tabindex="-1" id="cert-h">¡' + esc(S.alias) + ', completaste la evaluación!</h2>' +
       '<p class="endmsg">Respondiste ' + totalAnswered() + ' desafíos en ' + MIS.length + ' misiones. Tu docente va a corregir tus respuestas.</p>' +
       '<div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><div class="v">' + totalXP() + '</div><div class="k">XP</div></div><div class="stat"><div class="v">' + S.insignias.length + '</div><div class="k">Insignias</div></div><div class="stat"><div class="v">' + Math.round(S.tiempoMs / 60000) + ' min</div><div class="k">Tiempo</div></div></div>' +
-      '<div class="row"><button class="btn btn-primary" data-send>' + F.icon('send') + ' Enviar respuestas a mi docente</button><button class="btn btn-ghost-dark" data-map>' + F.icon('map') + ' Volver al mapa</button></div>' +
-      '<p class="sendst-dark" id="sendst" role="status">' + lastSendText() + '</p></section></main>');
+      '<div class="row">' + (alreadySent() ? '' : '<button class="btn btn-primary" data-send hidden>' + F.icon('refresh') + ' Reintentar envío</button>') + '<button class="btn btn-ghost-dark" data-map>' + F.icon('map') + ' Volver al mapa</button></div>' +
+      '<p class="sendst-dark" id="sendst" role="status">' + sendStatusText() + '</p></section></main>');
     wireTop(root);
     on(root, '[data-map]', 'click', () => renderMap());
     on(root, '[data-send]', 'click', (e) => sendReport(e.currentTarget));
     confetti($('#cert')); $('#cert-h').focus();
-    if (CFG.ENVIO_AUTOMATICO_AL_FINAL && configured() && !sentAfterLastAnswer(S)) sendReport($('[data-send]'));
+    if (!alreadySent()) { if (SENDING) setStatus('', 'Enviando tus respuestas…'); else sendReport($('[data-send]')); }
   }
 
   /* ================= PROGRESO (estudiante, sin resultados) ================= */
@@ -344,14 +344,12 @@
       '<div class="rhead"><div><h2>Progreso de ' + esc(S.alias) + '</h2><div class="meta">' + esc(CFG.NOMBRE_AVENTURA) + ' · ' + esc(CFG.CURSO) + '</div></div><div class="meta" style="text-align:right">Tiempo registrado: <b>' + Math.round(S.tiempoMs / 60000) + ' min</b></div></div>' +
       '<div class="cols2"><div><table class="rt"><thead><tr><th>Misión</th><th>Respondidos</th><th>Estado</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
       '<div><div class="rgrid" style="grid-template-columns:1fr 1fr"><div class="stat"><div class="v">' + totalAnswered() + ' / ' + totalItems + '</div><div class="k">Desafíos respondidos</div></div><div class="stat"><div class="v">' + totalXP() + '</div><div class="k">XP</div></div></div>' +
-      '<p class="rnote">Los resultados (respuestas correctas e incorrectas) los ve solamente tu docente. Cuando termines todas las misiones, enviá tus respuestas.</p></div></div></section>' +
-      '<div class="rbar"><button class="btn btn-primary" data-send>' + F.icon('send') + ' Enviar respuestas</button><span class="sendst" id="sendst" role="status">' + lastSendText() + '</span><div class="spacer"></div><button class="btn btn-ghost" data-map>' + F.icon('map') + ' Volver al mapa</button></div></main>');
+      '<p class="rnote">Los resultados (respuestas correctas e incorrectas) los ve solamente tu docente. Tus respuestas se envían <b>una sola vez</b>, automáticamente, al completar las ' + MIS.length + ' misiones.</p></div></div></section>' +
+      '<div class="rbar">' + (MIS.every(complete) && !alreadySent() ? '<button class="btn btn-primary" data-send>' + F.icon('refresh') + ' Reintentar envío</button>' : '') +
+      '<span class="sendst" id="sendst" role="status">' + sendStatusText() + '</span><div class="spacer"></div><button class="btn btn-ghost" data-map>' + F.icon('map') + ' Volver al mapa</button></div></main>');
     wireTop(root);
     on(root, '[data-map]', 'click', () => renderMap());
-    on(root, '[data-send]', 'click', (e) => {
-      if (!MIS.every(complete)) { openModal('¿Enviar ahora?', '<p>Todavía no completaste todas las misiones. Podés enviar lo que llevás respondido y volver a enviar al terminar.</p>', [{ t: 'Cancelar', cls: 'btn-ghost-dark' }, { t: 'Enviar igual', cls: 'btn-primary', fn: () => sendReport(e.currentTarget) }]); return; }
-      sendReport(e.currentTarget);
-    });
+    on(root, '[data-send]', 'click', (e) => sendReport(e.currentTarget));
   }
 
   /* ================= INFORME DOCENTE ================= */
@@ -360,6 +358,12 @@
     if (logro >= CFG.NIVELES.consolidado - EPS) return { k: 'c', t: 'Logro consolidado' };
     if (logro >= CFG.NIVELES.enProceso - EPS) return { k: 'p', t: 'En proceso de consolidación' };
     return { k: 'a', t: 'Requiere acompañamiento' };
+  }
+  /** nota en escala de 1 a 10: % de logro × 10, con mínimo y redondeo configurables */
+  function notaDe(logro) {
+    const N = CFG.NOTA, k = Math.pow(10, N.decimales || 0);
+    const v = Math.round(logro * N.maxima * k + 1e-9) / k;
+    return Math.min(N.maxima, Math.max(N.minima, v));
   }
   function buildReport() {
     const per = {}, order = [], items = [];
@@ -381,6 +385,8 @@
       tiempoMin: Math.round((S.tiempoMs || 0) / 60000), misionesCompletadas: MIS.filter(complete).length,
       respondidas: resp.length, total: items.length, correctas: ok, incorrectas: resp.length - ok,
       pctCorrectas: resp.length ? ok / resp.length : 0, logro: resp.length ? resp.reduce((a, x) => a + x.parcial, 0) / resp.length : 0,
+      puntos: Math.round(resp.reduce((a, x) => a + x.parcial, 0) * 100) / 100, logroTotal: resp.reduce((a, x) => a + x.parcial, 0) / items.length,
+      nota: MIS.every(complete) ? notaDe(resp.reduce((a, x) => a + x.parcial, 0) / items.length) : null,
       xp: totalXP(), insignias: S.insignias.map((id) => (C.insignias.find((b) => b.id === id) || {}).nombre).filter(Boolean),
       porContenido: order, porMision: MIS.map((m, i) => { const its = items.filter((x) => x.mision.startsWith((i + 1) + '. ')), rs = its.filter((x) => x.respondida); return { n: i + 1, titulo: m.titulo, completa: complete(m), respondidas: rs.length, total: its.length, correctas: rs.filter((x) => x.ok).length, logro: rs.length ? rs.reduce((a, x) => a + x.parcial, 0) / rs.length : 0 }; }),
       items: items, docente: !!S.docente
@@ -395,16 +401,16 @@
       '<div class="tabs" role="tablist">' + [['res', 'Resumen'], ['det', 'Respuestas detalladas']].map((t) => '<button class="tab" role="tab" aria-selected="' + (t[0] === tab) + '" data-tab="' + t[0] + '">' + t[1] + '</button>').join('') +
       '<span class="chip chip-amber" style="margin-left:auto">' + F.icon('lock') + ' Vista docente</span></div><div style="min-height:0;display:grid">' +
       '<section class="card paper rpanel" id="rp-res"' + (tab === 'res' ? '' : ' hidden') + '><div class="rhead"><div><h2>Informe de ' + esc(R.alias) + '</h2><div class="meta">' + esc(R.aventura) + ' · ' + esc(R.curso) + ' · ' + esc(R.fecha) + '</div></div><div class="meta" style="text-align:right">Tiempo registrado: <b>' + R.tiempoMin + ' min</b></div></div>' +
-      '<div class="rgrid">' + st(R.misionesCompletadas + ' / ' + MIS.length, 'Misiones completas') + st(R.respondidas + ' / ' + R.total, 'Desafíos respondidos') + st(R.correctas + ' / ' + R.incorrectas, 'Correctas / no correctas') + st(pct(R.pctCorrectas) + ' · ' + pct(R.logro), '% correctas · % de logro') + '</div>' +
+      '<div class="rgrid" style="grid-template-columns:repeat(6,1fr)">' + st(R.misionesCompletadas + ' / ' + MIS.length, 'Misiones completas') + st(R.respondidas + ' / ' + R.total, 'Desafíos respondidos') + st(R.correctas + ' / ' + R.incorrectas, 'Correctas / no correctas') + st(pct(R.pctCorrectas) + ' · ' + pct(R.logroTotal), '% correctas · % de logro') + st(E.fmt(R.puntos) + ' / ' + R.total, 'Puntaje') + st(R.nota == null ? '—' : E.fmt(R.nota), 'Nota (1 a 10)') + '</div>' +
       '<div class="cols2" style="margin-top:.7rem"><div><h3 class="rsub">Por contenido</h3><table class="rt"><thead><tr><th>Contenido</th><th>Resp.</th><th>Correctas</th><th>Logro</th><th>Nivel</th></tr></thead><tbody>' +
       R.porContenido.map((p) => '<tr><td>' + esc(p.nombre) + '</td><td class="n">' + p.n + '/' + p.total + '</td><td class="n">' + p.ok + '</td><td class="n">' + (p.n ? pct(p.logro) : '—') + '</td><td><span class="lvl ' + p.nivel.k + '">' + p.nivel.t + '</span></td></tr>').join('') + '</tbody></table></div>' +
       '<div><h3 class="rsub">Por misión</h3><table class="rt"><thead><tr><th>Misión</th><th>Resp.</th><th>Correctas</th><th>Logro</th></tr></thead><tbody>' +
       R.porMision.map((x) => '<tr><td>' + x.n + '. ' + esc(x.titulo) + '</td><td class="n">' + x.respondidas + '/' + x.total + '</td><td class="n">' + x.correctas + '</td><td class="n">' + (x.respondidas ? pct(x.logro) : '—') + '</td></tr>').join('') + '</tbody></table></div></div>' +
-      '<p class="rnote"><b>% correctas</b> = desafíos totalmente correctos ÷ respondidos. <b>% de logro</b> = promedio del puntaje de cada desafío, donde los de varias partes (cálculos, clasificar, completar, ordenar) suman la fracción de partes correctas; opción única y múltiple valen 1 o 0. Niveles: consolidado ≥ ' + pct(CFG.NIVELES.consolidado) + ', en proceso ≥ ' + pct(CFG.NIVELES.enProceso) + '.' + (R.docente ? ' <b>Modo docente activo en este equipo.</b>' : '') + '</p></section>' +
+      '<p class="rnote"><b>% correctas</b> = desafíos totalmente correctos ÷ respondidos. <b>% de logro</b> = promedio del puntaje de cada desafío, donde los de varias partes (cálculos, clasificar, completar, ordenar) suman la fracción de partes correctas; opción única y múltiple valen 1 o 0. <b>Nota</b> = % de logro sobre los ' + R.total + ' desafíos × 10 (mínimo ' + CFG.NOTA.minima + (CFG.NOTA.decimales ? '' : ', redondeada a entero') + '); se calcula al completar las ' + MIS.length + ' misiones. Niveles: consolidado ≥ ' + pct(CFG.NIVELES.consolidado) + ', en proceso ≥ ' + pct(CFG.NIVELES.enProceso) + '.' + (R.docente ? ' <b>Modo docente activo en este equipo.</b>' : '') + '</p></section>' +
       '<section class="card paper rpanel" id="rp-det"' + (tab === 'det' ? '' : ' hidden') + '><table class="rt rt-det"><thead><tr><th>N.º</th><th>Consigna</th><th>Respuesta del estudiante</th><th>Respuesta correcta</th><th>Resultado</th></tr></thead><tbody>' +
       R.items.map((x) => '<tr><td class="n">' + x.num + '</td><td>' + esc(x.consigna.length > 140 ? x.consigna.slice(0, 140) + '…' : x.consigna) + '</td><td>' + esc(x.respuesta || '—') + '</td><td>' + esc(x.correcta) + '</td><td>' + mark(x) + '</td></tr>').join('') + '</tbody></table></section></div>' +
-      '<div class="rbar"><button class="btn btn-primary" data-send>' + F.icon('send') + ' Enviar a la planilla</button><button class="btn btn-ghost" data-print>' + F.icon('print') + ' Imprimir / PDF</button>' +
-      '<span class="sendst" id="sendst" role="status">' + lastSendText() + '</span><div class="spacer"></div><button class="btn btn-ghost" data-map>' + F.icon('map') + ' Salir de la vista docente</button></div></main>');
+      '<div class="rbar">' + (MIS.every(complete) && !alreadySent() ? '<button class="btn btn-primary" data-send>' + F.icon('send') + ' Enviar a la planilla</button>' : '') + '<button class="btn btn-ghost" data-print>' + F.icon('print') + ' Imprimir / PDF</button>' +
+      '<span class="sendst" id="sendst" role="status">' + sendStatusText() + '</span><div class="spacer"></div><button class="btn btn-ghost" data-map>' + F.icon('map') + ' Salir de la vista docente</button></div></main>');
     wireTop(root);
     on(root, '[data-tab]', 'click', (e) => { const t = e.currentTarget.getAttribute('data-tab'); root.querySelectorAll('[data-tab]').forEach((b) => b.setAttribute('aria-selected', b === e.currentTarget)); root.querySelectorAll('.rpanel').forEach((p) => { p.hidden = p.id !== 'rp-' + t; }); });
     on(root, '[data-map]', 'click', () => renderMap());
@@ -413,32 +419,48 @@
   }
 
   /* ================= ENVÍO ================= */
-  function lastSendText() { const l = S.envios && S.envios[S.envios.length - 1]; return l ? 'Último envío: ' + new Date(l.t).toLocaleString('es-AR') + ' (' + l.estado + ')' : ''; }
   function configured() { return CFG.APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(CFG.APPS_SCRIPT_URL) && CFG.GOOGLE_SHEET_ID && !/PEGAR/.test(CFG.GOOGLE_SHEET_ID); }
   function payload() {
-    const R = buildReport(), id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+    const R = buildReport();
+    if (!S.envioId) { S.envioId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2); save(); }
+    const id = S.envioId;   // fijo por estudiante: la planilla descarta cualquier envío repetido
     const r1 = (x) => Math.round(x * 1000) / 10;
     return { clave: CFG.CLAVE_ENVIO, sheetId: CFG.GOOGLE_SHEET_ID, envioId: id, version: 'evaluacion-v2',
       alias: R.alias, curso: R.curso, fecha: R.fechaISO, tiempoMin: R.tiempoMin, misionesCompletadas: R.misionesCompletadas,
-      respondidas: R.respondidas, total: R.total, correctas: R.correctas, incorrectas: R.incorrectas, pctCorrectas: r1(R.pctCorrectas), logro: r1(R.logro),
+      respondidas: R.respondidas, total: R.total, correctas: R.correctas, incorrectas: R.incorrectas, pctCorrectas: r1(R.pctCorrectas), logro: r1(R.logroTotal), puntos: R.puntos, nota: R.nota,
       xp: R.xp, insignias: R.insignias.join(', '), modoDocente: R.docente,
       porContenido: R.porContenido.map((p) => ({ contenido: p.nombre, respondidas: p.n, correctas: p.ok, logro: r1(p.logro), nivel: p.nivel.t })),
       porMision: R.porMision.map((x) => ({ mision: x.n + '. ' + x.titulo, completa: x.completa, respondidas: x.respondidas, correctas: x.correctas, logro: r1(x.logro) })),
       respuestas: R.items.map((x) => ({ num: x.num, mision: x.mision, contenido: x.contenido, consigna: x.consigna.slice(0, 300), respuesta: x.respuesta, correcta: x.correcta, resultado: !x.respondida ? 'Sin responder' : x.ok ? 'Correcta' : x.parcial > 0 ? 'Parcial' : 'Incorrecta', puntaje: x.parcial == null ? '' : x.parcial })) };
   }
+  let SENDING = false;
+  function sendStatusText() {
+    const l = (S.envios || []).filter((e) => e.estado === 'recibido' || e.estado === 'sin confirmación').pop();
+    if (l) return '✓ Respuestas registradas el ' + new Date(l.t).toLocaleString('es-AR') + (l.estado === 'sin confirmación' ? ' (sin confirmación de la planilla)' : '') + '.';
+    if (!MIS.every(complete)) return 'Tus respuestas se enviarán automáticamente al completar las ' + MIS.length + ' misiones.';
+    if (!configured()) return 'La docente todavía no configuró la planilla. Tus respuestas quedan guardadas en esta computadora.';
+    return 'Tus respuestas todavía no se enviaron.';
+  }
+  function setStatus(cls, t) { const st = $('#sendst'); if (st) { st.className = (st.classList.contains('sendst-dark') ? 'sendst-dark ' : 'sendst ') + cls; st.textContent = t; } }
+  /** envía el resultado UNA sola vez, solo cuando las 8 misiones están completas */
   function sendReport(btn) {
-    const st = $('#sendst');
-    const set = (cls, t) => { if (st) { st.className = (st.classList.contains('sendst-dark') ? 'sendst-dark ' : 'sendst ') + cls; st.textContent = t; } };
-    if (!configured()) { set('bad', 'La docente todavía no configuró la planilla (archivo config.js). Avisale a tu docente.'); return; }
-    if (!navigator.onLine) { set('bad', 'No hay conexión a internet. Conectate y volvé a intentar.'); return; }
-    if (btn) btn.disabled = true; set('', 'Enviando…');
+    if (!S || alreadySent() || SENDING || !MIS.every(complete)) return;
+    const showBtn = (v) => { const b = btn || $('[data-send]'); if (b) { b.hidden = !v; b.disabled = !v; } };
+    if (!configured()) { setStatus('bad', 'La docente todavía no configuró la planilla (archivo config.js). Tus respuestas quedan guardadas en esta computadora.'); showBtn(false); return; }
+    if (!navigator.onLine) { setStatus('bad', 'No hay conexión a internet. Conectate y tocá «Reintentar envío».'); showBtn(true); return; }
+    SENDING = true; showBtn(false); setStatus('', 'Enviando tus respuestas…');
     const body = JSON.stringify(payload());
-    const done = (estado, cls, msg) => { if (btn) btn.disabled = false; set(cls, msg); if (estado) { S.envios.push({ t: Date.now(), estado: estado }); save(); } };
+    const done = (estado, cls, msg) => {
+      SENDING = false;
+      if (estado) { S.envios.push({ t: Date.now(), estado: estado }); save(); }
+      if (!S || !document.body.contains($('#sendst') || document.body)) return;
+      setStatus(cls, msg); showBtn(!estado);
+    };
     fetch(CFG.APPS_SCRIPT_URL, { method: 'POST', body: body, redirect: 'follow' }).then((r) => r.json())
-      .then((j) => { if (j && j.ok) done('recibido', 'ok', '¡Respuestas enviadas! La planilla confirmó la recepción.'); else done(null, 'bad', 'La planilla respondió con un error: ' + ((j && j.error) || 'desconocido') + '. Avisale a tu docente.'); })
+      .then((j) => { if (j && j.ok) done('recibido', 'ok', '✓ ¡Respuestas registradas! La planilla confirmó la recepción.'); else done(null, 'bad', 'La planilla respondió con un error: ' + ((j && j.error) || 'desconocido') + '. Avisale a tu docente y tocá «Reintentar envío».'); })
       .catch(() => fetch(CFG.APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: body })
-        .then(() => done('sin confirmación', 'ok', 'Respuestas enviadas. (El navegador no pudo leer la confirmación: tu docente puede verificar la planilla.)'))
-        .catch(() => done(null, 'bad', 'No se pudo enviar. Revisá la conexión e intentá otra vez.')));
+        .then(() => done('sin confirmación', 'ok', '✓ Respuestas enviadas. (El navegador no pudo leer la confirmación: tu docente puede verificar la planilla.)'))
+        .catch(() => done(null, 'bad', 'No se pudo enviar. Revisá la conexión y tocá «Reintentar envío».')));
   }
 
   /* ================= MODALES ================= */
