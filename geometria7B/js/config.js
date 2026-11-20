@@ -8,9 +8,9 @@ window.APP_CONFIG = {
 
   /* --- Registro de respuestas en Google Sheets (ver README, sección "Google Sheets") --- */
   // ID de la planilla: es la parte de la URL entre /d/ y /edit
-  GOOGLE_SHEET_ID: 'PEGAR_AQUI_EL_ID_DE_LA_PLANILLA',
+  GOOGLE_SHEET_ID: '1Hq4anw3arwvf8GL84Vq241LnATCAHAvYEyN0YQKKfKQ',
   // URL de la aplicación web de Apps Script (termina en /exec)
-  APPS_SCRIPT_URL: 'PEGAR_AQUI_LA_URL_DEL_WEB_APP',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzbNF7PFaH6kci7nxReXPQQRk2SZHU5_IIKeWfciO7IBV1OM9Z3qbKMpseefl16DS1f/exec',
   // Clave compartida: debe ser IGUAL a la que figura en Code.gs
   CLAVE_ENVIO: 'guardianes-7mo',
   // Las respuestas se envían UNA sola vez, automáticamente, al completar todas las misiones.
